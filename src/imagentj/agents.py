@@ -255,7 +255,14 @@ class VLMHandoff(BaseModel):
 # Models
 # ---------------------------------------------------------------------------
 
-if open_router_key:
+_local_llm_base_url = os.getenv("LOCAL_LLM_BASE_URL", "").strip()
+if _local_llm_base_url:
+    # Local OpenAI-compatible server (e.g. Ollama at http://host.docker.internal:11434/v1).
+    # Reuses the Chat Completions path (model names passed through unchanged).
+    api_key = os.getenv("LOCAL_LLM_API_KEY", "ollama")
+    base_url = _local_llm_base_url
+    use_openrouter = True
+elif open_router_key:
     api_key = open_router_key
     base_url = "https://openrouter.ai/api/v1"
     use_openrouter = True
